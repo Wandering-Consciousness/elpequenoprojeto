@@ -30,7 +30,7 @@ def udio_it(prompt, url):
         # Post to Reddit
         title = quote(prompt)
         text = "Generated [this song](https://www.udio.com/songs/" + track_ids[0] + ") and [this song](https://www.udio.com/songs/" + track_ids[1] + ") based on [this news](" + url + ")"
-        reddit_curl = 'curl -i -H "Authorization: Bearer ***INSERT YOUR REDDIT CCESS TOKEN***" -H "User-Agent: https://www.reddit.com/r/elpequenoprojeto/ The Little Project" -H "Content-Type: application/x-www-form-urlencoded" -X POST -d "title=' + title + '&kind=self&sr=elpequenoprojeto&resubmit=true&sendreplies=true&text=' + text + '" https://oauth.reddit.com/api/submit'
+        reddit_curl = 'curl -i -H "Authorization: Bearer ***INSERT YOUR REDDIT ACCESS TOKEN***" -H "User-Agent: https://www.reddit.com/r/elpequenoprojeto/ The Little Project" -H "Content-Type: application/x-www-form-urlencoded" -X POST -d "title=' + title + '&kind=self&sr=elpequenoprojeto&resubmit=true&sendreplies=true&text=' + text + '" https://oauth.reddit.com/api/submit'
         cmd_out = os.popen(reddit_curl).read()
     else:
         print("Call failed")
