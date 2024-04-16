@@ -90,14 +90,19 @@ class HackerNewsCrawler(AbstractBaseCrawler):
                     story.content_type = Story.TEXT
                     story.content = text
 
+                is_new = False
                 if story.status == Story.NEW:
+                    is_new = True
+
+                story.status = Story.OK
+                story.save()
+
+                if is_new:
                     if url:
                         udio_it(story.title, url)
                     elif story.content_type == Story.TEXT:
                         udio_it(story.title + " " + text, story.url)
 
-                story.status = Story.OK
-                story.save()
         except Exception:
             logger.exception('Exception in code {0} HackerNewsCrawler.update_story'.format(code))
 
@@ -135,11 +140,16 @@ class RedditCrawler(AbstractBaseCrawler):
                 story.title = story_data.get('title', '')
                 story.nsfw = story_data.get('over_18', False)
 
+                is_new = False
                 if story.status == Story.NEW:
-                    udio_it(story.title, story.url)
+                    is_new = True
 
                 story.status = Story.OK
                 story.save()
+
+                if is_new:
+                    udio_it(story.title, story.url)
+
         except Exception:
             logger.exception('An error occurred while executing `update_top_stores` for Reddit.')
             raise
@@ -191,11 +201,15 @@ class GithubCrawler(AbstractBaseCrawler):
                 story.description = description
 
                 # TODO: Check if this Crawler is actually getting any data
+                is_new = False
                 if story.status == Story.NEW:
-                    udio_it(story.title + " " + story.description, story.url)
+                    is_new = True
 
                 story.status = Story.OK
                 story.save()
+
+                if is_new:
+                    udio_it(story.title + " " + story.description, story.url)
 
         except Exception:
             logger.exception('An error occurred while executing `update_top_stores` for GitHub.')
@@ -236,11 +250,15 @@ class NYTimesCrawler(AbstractBaseCrawler):
             update.score_changes = score_run
             update.save()
 
+        is_new = False
         if story.status == Story.NEW:
-            udio_it(story.title, story.url)
+            is_new = True
 
         story.status = Story.OK
         story.save()
+
+        if is_new:
+            udio_it(story.title, story.url)
 
     def update_top_stories(self):
         try:
