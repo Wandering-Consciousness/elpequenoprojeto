@@ -9,6 +9,8 @@ from woid.apps.services.models import Service, Story, StoryUpdate
 
 logger = logging.getLogger(__name__)
 
+def udio_it(prompt, url):
+    print("udio it! PROMPT: ", prompt, " >>> URL: ", url)
 
 class AbstractBaseCrawler:
     def __init__(self, slug, client):
@@ -88,6 +90,12 @@ class HackerNewsCrawler(AbstractBaseCrawler):
                     story.content_type = Story.TEXT
                     story.content = text
 
+                if story.status == Story.NEW:
+                    if url:
+                        udio_it(story.title, url)
+                    elif story.content_type == Story.TEXT:
+                        udio_it(story.title + " " + text, story.url)
+
                 story.status = Story.OK
                 story.save()
         except Exception:
@@ -126,6 +134,9 @@ class RedditCrawler(AbstractBaseCrawler):
                 story.score = score
                 story.title = story_data.get('title', '')
                 story.nsfw = story_data.get('over_18', False)
+
+                if story.status == Story.NEW:
+                    udio_it(story.title, story.url)
 
                 story.status = Story.OK
                 story.save()
@@ -179,6 +190,10 @@ class GithubCrawler(AbstractBaseCrawler):
 
                 story.description = description
 
+                # TODO: Check if this Crawler is actually getting any data
+                if story.status == Story.NEW:
+                    udio_it(story.title + " " + story.description, story.url)
+
                 story.status = Story.OK
                 story.save()
 
@@ -220,6 +235,9 @@ class NYTimesCrawler(AbstractBaseCrawler):
             update = StoryUpdate(story=story)
             update.score_changes = score_run
             update.save()
+
+        if story.status == Story.NEW:
+            udio_it(story.title, story.url)
 
         story.status = Story.OK
         story.save()
