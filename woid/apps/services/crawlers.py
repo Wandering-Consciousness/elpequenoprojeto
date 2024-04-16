@@ -16,8 +16,8 @@ call_counter = 0
 
 def udio_it(prompt, url):
     global call_counter
-    prompt = prompt.replace("'", "\\'").replace('"', '\\"')
     curl = "curl -H 'accept: application/json, text/plain, */*' -H 'content-type: application/json' -H 'origin: https://www.udio.com' -H 'cookie: _ga_RF4WWQM7BF=GS1.1.1713208564.1.1.1713209172.0.0.0' -H 'cookie: _ga=GA1.1.94385292.1713208564' -H 'cookie: sb-api-auth-token=***INSERT YOUR OWN SB-API-AUTH-TOKEN FROM YOUR BROWSER COOKIES WITH Udio.com***' -H 'user-agent: https://www.reddit.com/r/elpequenoprojeto/ The Little Project' -H 'referer: https://www.udio.com/search' --compressed -X POST https://www.udio.com/api/generate-proxy -d '{\"prompt\":\"" + prompt + "\",\"samplerOptions\":{\"seed\":-1,\"bypass_prompt_optimization\":false}}'"
+    prompt = prompt.replace("'", "").replace('"', '')
     print("Udio it! PROMPT: ", prompt, " >>> URL: ", url)
     call_counter += 1
     cmd_out = os.popen(curl).read()
