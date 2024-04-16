@@ -31,7 +31,7 @@ def udio_it(prompt, url):
 
     if call_counter == 2:
         print("Sleeping...")
-        time.sleep(70)
+        time.sleep(90)
         call_counter = 0
         print("Awake")
         print("")
