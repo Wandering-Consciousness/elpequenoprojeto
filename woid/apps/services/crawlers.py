@@ -4,6 +4,7 @@ import logging
 import json
 import os
 import time
+from urllib.parse import quote
 
 from django.utils import timezone
 
@@ -16,18 +17,23 @@ call_counter = 0
 
 def udio_it(prompt, url):
     global call_counter
-    curl = "curl -H 'accept: application/json, text/plain, */*' -H 'content-type: application/json' -H 'origin: https://www.udio.com' -H 'cookie: _ga_RF4WWQM7BF=GS1.1.1713208564.1.1.1713209172.0.0.0' -H 'cookie: _ga=GA1.1.94385292.1713208564' -H 'cookie: sb-api-auth-token=***INSERT YOUR OWN SB-API-AUTH-TOKEN FROM YOUR BROWSER COOKIES WITH Udio.com***' -H 'user-agent: https://www.reddit.com/r/elpequenoprojeto/ The Little Project' -H 'referer: https://www.udio.com/search' --compressed -X POST https://www.udio.com/api/generate-proxy -d '{\"prompt\":\"" + prompt + "\",\"samplerOptions\":{\"seed\":-1,\"bypass_prompt_optimization\":false}}'"
     prompt = prompt.replace("'", "").replace('"', '')
+    udio_curl = "curl -H 'accept: application/json, text/plain, */*' -H 'content-type: application/json' -H 'origin: https://www.udio.com' -H 'cookie: _ga_RF4WWQM7BF=GS1.1.1713208564.1.1.1713209172.0.0.0' -H 'cookie: _ga=GA1.1.94385292.1713208564' -H 'cookie: sb-api-auth-token=***INSERT YOUR OWN SB-API-AUTH-TOKEN FROM YOUR BROWSER COOKIES WITH Udio.com***' -H 'user-agent: https://www.reddit.com/r/elpequenoprojeto/ The Little Project' -H 'referer: https://www.udio.com/search' --compressed -X POST https://www.udio.com/api/generate-proxy -d '{\"prompt\":\"" + prompt + "\",\"samplerOptions\":{\"seed\":-1,\"bypass_prompt_optimization\":false}}'"
     print("Udio it! PROMPT: ", prompt, " >>> URL: ", url)
     call_counter += 1
-    cmd_out = os.popen(curl).read()
+    cmd_out = os.popen(udio_curl).read()
     if "Success" in cmd_out:
         response_j = json.loads(cmd_out)
         track_ids = response_j['track_ids']
         print("track 1 ID: ", track_ids[0], "track 2 ID: ", track_ids[1])
+
+        # Post to Reddit
+        title = quote(prompt)
+        text = "Generated [this song](https://www.udio.com/songs/" + track_ids[0] + ") and [this song](https://www.udio.com/songs/" + track_ids[1] + ") based on [this news](" + url + ")"
+        reddit_curl = 'curl -i -H "Authorization: Bearer ***INSERT YOUR REDDIT CCESS TOKEN***" -H "User-Agent: https://www.reddit.com/r/elpequenoprojeto/ The Little Project" -H "Content-Type: application/x-www-form-urlencoded" -X POST -d "title=' + title + '&kind=self&sr=elpequenoprojeto&resubmit=true&sendreplies=true&text=' + text + '" https://oauth.reddit.com/api/submit'
+        cmd_out = os.popen(reddit_curl).read()
     else:
         print("Call failed")
-
 
     if call_counter == 2:
         print("Sleeping...")
