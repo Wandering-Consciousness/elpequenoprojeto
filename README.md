@@ -1,3 +1,11 @@
+# The Little Project | El Pequeno Projeto
+
+Bot to take simple news aggregator displaying top stories in real time, send it to Udio.com to get music with lyrics made in a gen AI fashion, then post to Reddit. News source from Hacker News, New York Times and Reddit.\
+\
+Logic is hardcoded into Woid, a news aggregator.\
+\
+https://www.reddit.com/r/elpequenoprojeto/
+
 # Woid
 
 [![Python Version](https://img.shields.io/badge/python-3.6-brightgreen.svg)](https://python.org)
